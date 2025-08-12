@@ -160,3 +160,85 @@ async function cerrarSesion() {
     window.location.href = "index.html";
   }
 }
+/////Modificar estudiantes
+async function cargarEstudiantes() {
+  const { data, error } = await client
+    .from("estudiantes")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    alert("Error al cargar estudiantes: " + error.message);
+    return;
+  }
+
+  const lista = document.getElementById("lista-estudiantes");
+  lista.innerHTML = "";
+
+  data.forEach((est) => {
+    const item = document.createElement("li");
+    item.classList.add("estudiante-item");
+
+    // Texto con nombre y clase
+    const texto = document.createElement("span");
+    texto.textContent = `${est.nombre} (${est.clase})`;
+
+    // Botón modificar
+    const btnModificar = document.createElement("button");
+    btnModificar.textContent = "Modificar";
+    btnModificar.classList.add("btn-modificar");
+    btnModificar.onclick = () => abrirFormularioModificar(est);
+
+    // Botón borrar
+    const btnBorrar = document.createElement("button");
+    btnBorrar.textContent = "Borrar";
+    btnBorrar.classList.add("btn-borrar");
+    btnBorrar.onclick = () => borrarEstudiante(est.id);
+
+    item.appendChild(texto);
+    item.appendChild(btnModificar);
+    item.appendChild(btnBorrar);
+    lista.appendChild(item);
+  });
+}
+
+// Abrir formulario para modificar el estudiante (usamos prompt simple para ejemplo)
+function abrirFormularioModificar(est) {
+  const nuevoNombre = prompt("Modificar nombre:", est.nombre);
+  if (nuevoNombre === null) return; // cancelar
+
+  const nuevoCorreo = prompt("Modificar correo:", est.correo);
+  if (nuevoCorreo === null) return;
+
+  const nuevaClase = prompt("Modificar clase:", est.clase);
+  if (nuevaClase === null) return;
+
+  modificarEstudiante(est.id, nuevoNombre, nuevoCorreo, nuevaClase);
+}
+
+async function modificarEstudiante(id, nombre, correo, clase) {
+  const { error } = await client
+    .from("estudiantes")
+    .update({ nombre, correo, clase })
+    .eq("id", id);
+
+  if (error) {
+    alert("Error al modificar estudiante: " + error.message);
+  } else {
+    alert("Estudiante modificado");
+    cargarEstudiantes();
+  }
+}
+
+async function borrarEstudiante(id) {
+  if (!confirm("¿Estás seguro de borrar este estudiante?")) return;
+
+  const { error } = await client.from("estudiantes").delete().eq("id", id);
+
+  if (error) {
+    alert("Error al borrar estudiante: " + error.message);
+  } else {
+    alert("Estudiante borrado");
+    cargarEstudiantes();
+  }
+}
