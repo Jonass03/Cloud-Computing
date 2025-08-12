@@ -202,20 +202,6 @@ async function cargarEstudiantes() {
   });
 }
 
-// Abrir formulario para modificar el estudiante (usamos prompt simple para ejemplo)
-function abrirFormularioModificar(est) {
-  const nuevoNombre = prompt("Modificar nombre:", est.nombre);
-  if (nuevoNombre === null) return; // cancelar
-
-  const nuevoCorreo = prompt("Modificar correo:", est.correo);
-  if (nuevoCorreo === null) return;
-
-  const nuevaClase = prompt("Modificar clase:", est.clase);
-  if (nuevaClase === null) return;
-
-  modificarEstudiante(est.id, nuevoNombre, nuevoCorreo, nuevaClase);
-}
-
 async function modificarEstudiante(id, nombre, correo, clase) {
   const { error } = await client
     .from("estudiantes")
@@ -230,15 +216,73 @@ async function modificarEstudiante(id, nombre, correo, clase) {
   }
 }
 
+// Modificar estudiante con Swal
+function abrirFormularioModificar(est) {
+  Swal.fire({
+    title: 'Modificar estudiante',
+    html:
+      `<input id="swalNombre" class="swal2-input" placeholder="Nombre" value="${est.nombre}">` +
+      `<input id="swalCorreo" type="email" class="swal2-input" placeholder="Correo" value="${est.correo}">` +
+      `<input id="swalClase" class="swal2-input" placeholder="Clase" value="${est.clase}">`,
+    focusConfirm: false,
+    showCancelButton: true,
+    confirmButtonText: 'Guardar',
+    cancelButtonText: 'Cancelar',
+    preConfirm: () => {
+      const nombre = document.getElementById('swalNombre').value.trim();
+      const correo = document.getElementById('swalCorreo').value.trim();
+      const clase = document.getElementById('swalClase').value.trim();
+
+      if (!nombre || !correo || !clase) {
+        Swal.showValidationMessage('Por favor completa todos los campos');
+        return false;
+      }
+      return { nombre, correo, clase };
+    },
+    customClass: {
+      popup: 'swal-popup-custom',
+      confirmButton: 'swal-confirm-btn',
+      cancelButton: 'swal-cancel-btn',
+      input: 'swal2-input'
+    }
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      const { nombre, correo, clase } = result.value;
+      const error = await modificarEstudiante(est.id, nombre, correo, clase);
+      if (!error) {
+        Swal.fire('¡Modificado!', 'Estudiante modificado correctamente', 'success');
+        cargarEstudiantes();
+      } else {
+        Swal.fire('Error', error.message, 'error');
+      }
+    }
+  });
+}
+
+// Borrar estudiante con confirmación Swal
 async function borrarEstudiante(id) {
-  if (!confirm("¿Estás seguro de borrar este estudiante?")) return;
+  const result = await Swal.fire({
+    title: '¿Seguro quieres borrar este estudiante?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Sí, borrar',
+    cancelButtonText: 'Cancelar',
+    reverseButtons: true,
+    customClass: {
+      popup: 'swal-popup-custom',
+      confirmButton: 'swal-delete-btn',
+      cancelButton: 'swal-cancel-btn'
+    }
+  });
 
-  const { error } = await client.from("estudiantes").delete().eq("id", id);
+  if (result.isConfirmed) {
+    const { error } = await client.from("estudiantes").delete().eq("id", id);
 
-  if (error) {
-    alert("Error al borrar estudiante: " + error.message);
-  } else {
-    alert("Estudiante borrado");
-    cargarEstudiantes();
+    if (error) {
+      Swal.fire('Error', error.message, 'error');
+    } else {
+      Swal.fire('Borrado', 'Estudiante borrado correctamente', 'success');
+      cargarEstudiantes();
+    }
   }
 }

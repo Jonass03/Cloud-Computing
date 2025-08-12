@@ -183,3 +183,75 @@ label {
 br {
   margin-bottom: 10px;
 }
+/* Estilos para SweetAlert personalizados */
+
+
+.swal-popup-custom {
+  border-radius: 15px !important;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #d0e8f2 0%, #a7cde6 100%) !important;
+  color: #11304d !important;
+  box-shadow: 0 8px 20px rgba(100, 149, 237, 0.3) !important;
+}
+
+.swal2-input {
+  border: 2px solid #8fc1e3 !important;
+  border-radius: 8px !important;
+  background: #f5faff !important;
+  color: #144870 !important;
+  font-size: 16px !important;
+  padding: 10px !important;
+  transition: border-color 0.3s ease !important;
+}
+
+.swal2-input:focus {
+  border-color: #20b2aa !important;
+  box-shadow: 0 0 8px rgba(32, 178, 170, 0.7) !important;
+  outline: none !important;
+}
+
+/* Botón confirmar (Guardar) */
+.swal-confirm-btn {
+  background-color: rgba(32, 178, 170, 0.85) !important;
+  color: white !important;
+  font-weight: 700 !important;
+  border-radius: 10px !important;
+  padding: 10px 24px !important;
+  box-shadow: 0 4px 12px rgba(32, 178, 170, 0.7) !important;
+  transition: background-color 0.3s ease !important;
+}
+
+.swal-confirm-btn:hover {
+  background-color: rgba(32, 178, 170, 1) !important;
+}
+
+/* Botón borrar */
+.swal-delete-btn {
+  background-color: rgba(138, 43, 226, 0.75) !important;
+  color: white !important;
+  font-weight: 700 !important;
+  border-radius: 10px !important;
+  padding: 10px 24px !important;
+  box-shadow: 0 4px 12px rgba(138, 43, 226, 0.8) !important;
+  transition: background-color 0.3s ease !important;
+}
+
+.swal-delete-btn:hover {
+  background-color: rgba(138, 43, 226, 1) !important;
+}
+
+/* Botón cancelar */
+.swal-cancel-btn {
+  color: #144870 !important;
+  font-weight: 600 !important;
+  border-radius: 10px !important;
+  padding: 10px 24px !important;
+  border: 2px solid #8fc1e3 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  transition: background-color 0.3s ease !important;
+}
+
+.swal-cancel-btn:hover {
+  background-color: rgba(143, 193, 227, 0.3) !important;
+}
